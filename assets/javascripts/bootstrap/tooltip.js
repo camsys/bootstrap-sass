@@ -317,11 +317,21 @@
   Tooltip.prototype.getPosition = function ($element) {
     $element   = $element || this.$element
     var el     = $element[0]
+    var width, height
+
+    if (el && 'http://www.w3.org/2000/svg' === el.namespaceURI) {
+    	var bbox = el.getBBox()
+    	width = bbox.width
+    	height = bbox.height
+    } else {
+    	width = $element.outerWidth()
+    	height = $element.outerHeight()
+	}
     var isBody = el.tagName == 'BODY'
     return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : null, {
       scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop(),
-      width:  isBody ? $(window).width()  : $element.outerWidth(),
-      height: isBody ? $(window).height() : $element.outerHeight()
+      width:  isBody ? $(window).width()  : width,
+      height: isBody ? $(window).height() : height
     }, isBody ? { top: 0, left: 0 } : $element.offset())
   }
 
